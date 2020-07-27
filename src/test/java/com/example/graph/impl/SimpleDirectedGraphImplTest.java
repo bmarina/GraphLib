@@ -107,6 +107,24 @@ public class SimpleDirectedGraphImplTest {
                 "Expected IllegalArgumentException to throw, but it didn't"
         );
         assertEquals(MSG_UNKNOWN_TARGET_VERTEX, thrownOnTarget.getLocalizedMessage());
+
+        DefaultEdge<String> customEdge1 = new DefaultEdge<>("C", "A");
+        final IllegalArgumentException thrownCustomEdgeSource = assertThrows(
+                IllegalArgumentException.class,
+                () -> graph.addEdge(customEdge1),
+                "Expected IllegalArgumentException to throw, but it didn't"
+        );
+        assertEquals(MSG_UNKNOWN_SOURCE_VERTEX, thrownCustomEdgeSource.getLocalizedMessage());
+
+
+        DefaultEdge<String> customEdge2 = new DefaultEdge<>("A", "C");
+        final IllegalArgumentException thrownCustomEdgeTarget = assertThrows(
+                IllegalArgumentException.class,
+                () -> graph.addEdge(customEdge2),
+                "Expected IllegalArgumentException to throw, but it didn't"
+        );
+        assertEquals(MSG_UNKNOWN_TARGET_VERTEX, thrownCustomEdgeTarget.getLocalizedMessage());
+
     }
 
     @Test
@@ -163,5 +181,17 @@ public class SimpleDirectedGraphImplTest {
 
         assertTrue(graph.containsEdge(new DefaultEdge<>("B", "A")), "Opposite edge was added");
         assertEquals(Collections.singleton(new DefaultEdge("B", "A")), graph.getOutgoingEdges("B"), "Outgoing edges should be not empty");
+    }
+
+    @Test
+    public void addEdgeTest() {
+        SimpleDirectedGraphImpl<String> graph = new SimpleDirectedGraphImpl<String>();
+        graph.addVertex("A");
+        graph.addVertex("B");
+        DefaultEdge<String> edge = new DefaultEdge<>("A", "B");
+        graph.addEdge(edge);
+        assertTrue(graph.containsEdge(edge), "Graph should contain edge");
+        assertEquals(Collections.singleton(edge), graph.getOutgoingEdges("A"), "New edge should be registered as outgoing");
+        assertEquals(Collections.singleton(edge), graph.getIncomingEdges("B"), "New edge should be registered as incoming");
     }
 }

@@ -19,6 +19,7 @@ public abstract class AbstractGraph<V, E extends Edge<V>> implements Graph<V, E>
     public static final String MSG_UNKNOWN_TARGET_VERTEX = "Unknown target vertex";
     public static final String MSG_UNKNOWN_VERTEX = "Unknown vertex";
     public static final String MSG_VERTEX_SHOULD_BE_NON_NULL = "Vertex should be not null";
+    public static final String MSG_EDGE_SHOULD_BE_NON_NULL = "Edge should be not null";
     public static final String MSG_SOURCE_VERTEX_SHOULD_BE_NON_NULL = "Source vertex should be not null";
     public static final String MSG_TARGET_VERTEX_SHOULD_BE_NON_NULL = "Target vertex should be not null";
     public static final String MSG_EDGE_SHOULD_BE_UNIQUE = "Edge should be unique";
@@ -51,9 +52,20 @@ public abstract class AbstractGraph<V, E extends Edge<V>> implements Graph<V, E>
      */
     protected abstract E createEdge(V sourceVertex, V targetVertex);
 
+    /**
+     * Creates graph specific edge container.
+     *
+     * @return edge container object.
+     */
     protected abstract EdgeContainer<E> createEdgeContainer();
 
-    protected abstract void createLinkBetweenVertices(V sourceVertex, V targetVertex);
+    /**
+     * Add edge into graph.
+     * Both vertices should exist. If they don't exist this method will create them.
+     *
+     * @param edge edge to add.
+     */
+    protected abstract void createLinkBetweenVertices(E edge);
 
     @Override
     public void addVertex(final V vertex) {
@@ -78,7 +90,26 @@ public abstract class AbstractGraph<V, E extends Edge<V>> implements Graph<V, E>
             throw new IllegalArgumentException(MSG_LOOPS_NOT_SUPPORTED);
         }
 
-        createLinkBetweenVertices(sourceVertex, targetVertex);
+        final E edge = createEdge(sourceVertex, targetVertex);
+        createLinkBetweenVertices(edge);
+    }
+
+    @Override
+    public void addEdge(E edge) {
+        Objects.requireNonNull(edge, MSG_EDGE_SHOULD_BE_NON_NULL);
+        if (!containsVertex(edge.getSource())) {
+            throw new IllegalArgumentException(MSG_UNKNOWN_SOURCE_VERTEX);
+        }
+
+        if (!containsVertex(edge.getTarget())) {
+            throw new IllegalArgumentException(MSG_UNKNOWN_TARGET_VERTEX);
+        }
+
+        if (!isSelfLoopSupported() && edge.getSource().equals(edge.getTarget())) {
+            throw new IllegalArgumentException(MSG_LOOPS_NOT_SUPPORTED);
+        }
+
+        createLinkBetweenVertices(edge);
     }
 
     @Override

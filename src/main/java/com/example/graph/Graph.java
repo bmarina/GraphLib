@@ -58,6 +58,15 @@ public interface Graph<V, E extends Edge<V>> {
     void addEdge(V sourceVertex, V targetVertex);
 
     /**
+     * Add provided edge. Edge should contain valid source and target vertices.
+     *
+     * @param edge edge to add into graph. Can't be null;
+     * @throws NullPointerException - if edge is null;
+     * @throws IllegalArgumentException - if edge contains not existing vertices.
+     */
+    void addEdge(E edge);
+
+    /**
      * Check if edge exists in graph.
      * For undirected graphs edges with same properties except source and target are considered as same.
      *

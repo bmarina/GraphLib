@@ -32,15 +32,13 @@ public abstract class AbstractDirectedGraph<V, E extends Edge<V>> extends Abstra
     }
 
     @Override
-    protected void createLinkBetweenVertices(V sourceVertex, V targetVertex) {
-        // Both vertices should exist. If they don't exist this method will create them.
-        final E edge = createEdge(sourceVertex, targetVertex);
+    protected void createLinkBetweenVertices(E edge) {
         if (containsEdge(edge)) {
             throw new IllegalArgumentException(MSG_EDGE_SHOULD_BE_UNIQUE);
         }
 
         // Register outgoing edge.
-        getMap().compute(sourceVertex, (v, edgeContainer) -> {
+        getMap().compute(edge.getSource(), (v, edgeContainer) -> {
             if (edgeContainer == null) {
                 edgeContainer = createEdgeContainer();
             }
@@ -49,7 +47,7 @@ public abstract class AbstractDirectedGraph<V, E extends Edge<V>> extends Abstra
         });
 
         // Register incoming edge.
-        getMap().compute(targetVertex, (v, edgeContainer) -> {
+        getMap().compute(edge.getTarget(), (v, edgeContainer) -> {
             if (edgeContainer == null) {
                 edgeContainer = createEdgeContainer();
             }

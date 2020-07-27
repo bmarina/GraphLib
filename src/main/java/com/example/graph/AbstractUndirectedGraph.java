@@ -37,17 +37,14 @@ public abstract class AbstractUndirectedGraph<V, E extends Edge<V>> extends Abst
     }
 
     @Override
-    protected void createLinkBetweenVertices(V sourceVertex, V targetVertex) {
-        // Both vertices should exist. If they don't exist this method will create them.
-        final E edge = createEdge(sourceVertex, targetVertex);
-
+    protected void createLinkBetweenVertices(E edge) {
         // Checks both types sorce->target and target->source.
         if (containsEdge(edge)) {
             throw new IllegalArgumentException(MSG_EDGE_SHOULD_BE_UNIQUE);
         }
 
         // Register edge for source.
-        getMap().compute(sourceVertex, (v, edgeContainer) -> {
+        getMap().compute(edge.getSource(), (v, edgeContainer) -> {
             if (edgeContainer == null) {
                 edgeContainer = createEdgeContainer();
             }
@@ -56,7 +53,7 @@ public abstract class AbstractUndirectedGraph<V, E extends Edge<V>> extends Abst
         });
 
         // Register edge for source.
-        getMap().compute(targetVertex, (v, edgeContainer) -> {
+        getMap().compute(edge.getTarget(), (v, edgeContainer) -> {
             if (edgeContainer == null) {
                 edgeContainer = createEdgeContainer();
             }
