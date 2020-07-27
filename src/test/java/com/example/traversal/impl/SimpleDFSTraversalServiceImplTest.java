@@ -9,10 +9,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static com.example.graph.AbstractGraph.MSG_SOURCE_VERTEX_SHOULD_BE_NON_NULL;
@@ -99,22 +101,22 @@ public class SimpleDFSTraversalServiceImplTest {
                         UndirectedStringGraphs.TWO_VERTEX_CONNECTED,
                         1,
                         2,
-                        Collections.singletonList(Collections.singletonList(new DefaultEdge<>(1, 2)))
+                        Collections.singletonList(parseIntegerNodes("1-2"))
                 ),
                 Arguments.of(
                         "4",
                         UndirectedStringGraphs.TWO_VERTEX_CONNECTED,
                         2,
                         1,
-                        Collections.singletonList(Collections.singletonList(new DefaultEdge<>(2, 1)))
+                        Collections.singletonList(parseIntegerNodes("2-1"))
                 ),
                 Arguments.of(
                         "5",
                         UndirectedStringGraphs.LOOP,
                         1,
                         5,
-                        Collections.singletonList(Collections.singletonList(new DefaultEdge<>(1, 5))
-                        )
+                        Collections.singletonList(parseIntegerNodes("1-5"))
+
                 ),
                 Arguments.of(
                         "6",
@@ -122,15 +124,8 @@ public class SimpleDFSTraversalServiceImplTest {
                         2,
                         4,
                         Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>(2, 3),
-                                        new DefaultEdge<>(3, 4)
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>(2, 1),
-                                        new DefaultEdge<>(1, 5),
-                                        new DefaultEdge<>(5, 4)
-                                )
+                                parseIntegerNodes("2-3;3-4"),
+                                parseIntegerNodes("2-1;1-5;5-4")
                         )
                 ),
                 Arguments.of(
@@ -139,15 +134,8 @@ public class SimpleDFSTraversalServiceImplTest {
                         1,
                         3,
                         Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>(1, 2),
-                                        new DefaultEdge<>(2, 3)
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>(1, 5),
-                                        new DefaultEdge<>(5, 4),
-                                        new DefaultEdge<>(4, 3)
-                                )
+                                parseIntegerNodes("1-2;2-3"),
+                                parseIntegerNodes("1-5;5-4;4-3")
                         )
                 ),
                 Arguments.of(
@@ -156,15 +144,8 @@ public class SimpleDFSTraversalServiceImplTest {
                         3,
                         1,
                         Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>(3, 2),
-                                        new DefaultEdge<>(2, 1)
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>(3, 4),
-                                        new DefaultEdge<>(4, 5),
-                                        new DefaultEdge<>(5, 1)
-                                )
+                                parseIntegerNodes("3-2;2-1"),
+                                parseIntegerNodes("3-4;4-5;5-1")
                         )
                 ),
                 Arguments.of(
@@ -172,12 +153,7 @@ public class SimpleDFSTraversalServiceImplTest {
                         UndirectedStringGraphs.GRAPH_WITH_THREE_SAME_PATHS,
                         1,
                         3,
-                        Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>(1, 2),
-                                        new DefaultEdge<>(2, 3)
-                                )
-                        )
+                        Arrays.asList(parseIntegerNodes("1-2;2-3"))
                 ),
                 Arguments.of(
                         "10",
@@ -185,24 +161,9 @@ public class SimpleDFSTraversalServiceImplTest {
                         1,
                         5,
                         Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>(1, 2),
-                                        new DefaultEdge<>(2, 3),
-                                        new DefaultEdge<>(3, 5)
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>(1, 2),
-                                        new DefaultEdge<>(2, 3),
-                                        new DefaultEdge<>(3, 4),
-                                        new DefaultEdge<>(4, 7),
-                                        new DefaultEdge<>(7, 5)
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>(1, 2),
-                                        new DefaultEdge<>(2, 3),
-                                        new DefaultEdge<>(3, 7),
-                                        new DefaultEdge<>(7, 5)
-                                )
+                                parseIntegerNodes("1-2;2-3;3-5"),
+                                parseIntegerNodes("1-2;2-3;3-4;4-7;7-5"),
+                                parseIntegerNodes("1-2;2-3;3-7;7-5")
                         )
                 ),
                 Arguments.of(
@@ -211,36 +172,10 @@ public class SimpleDFSTraversalServiceImplTest {
                         1,
                         8,
                         Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>(1, 2),
-                                        new DefaultEdge<>(2, 3),
-                                        new DefaultEdge<>(3, 7),
-                                        new DefaultEdge<>(7, 8)
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>(1, 2),
-                                        new DefaultEdge<>(2, 3),
-                                        new DefaultEdge<>(3, 5),
-                                        new DefaultEdge<>(5, 7),
-                                        new DefaultEdge<>(7, 8)
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>(1, 2),
-                                        new DefaultEdge<>(2, 3),
-                                        new DefaultEdge<>(3, 4),
-                                        new DefaultEdge<>(4, 7),
-                                        new DefaultEdge<>(7, 8)
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>(1, 2),
-                                        new DefaultEdge<>(2, 3),
-                                        new DefaultEdge<>(3, 7),
-                                        new DefaultEdge<>(7, 5),
-                                        new DefaultEdge<>(5, 3),
-                                        new DefaultEdge<>(3, 4),
-                                        new DefaultEdge<>(4, 7),
-                                        new DefaultEdge<>(7, 8)
-                                )
+                                parseIntegerNodes("1-2;2-3;3-7;7-8"),
+                                parseIntegerNodes("1-2;2-3;3-5;5-7;7-8"),
+                                parseIntegerNodes("1-2;2-3;3-4;4-7;7-8"),
+                                parseIntegerNodes("1-2;2-3;3-7;7-5;5-3;3-4;4-7;7-8")
                         )
                 ),
                 Arguments.of(
@@ -263,13 +198,8 @@ public class SimpleDFSTraversalServiceImplTest {
                         1,
                         3,
                         Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>(1, 2),
-                                        new DefaultEdge<>(2, 3)
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>(1, 3)
-                                )
+                                parseIntegerNodes("1-2;2-3"),
+                                parseIntegerNodes("1-3")
                         )
                 )
         );
@@ -306,39 +236,21 @@ public class SimpleDFSTraversalServiceImplTest {
                         DirectedStringGraphs.LOOP,
                         "A",
                         "E",
-                        Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>("A", "B"),
-                                        new DefaultEdge<>("B", "C"),
-                                        new DefaultEdge<>("C", "D"),
-                                        new DefaultEdge<>("D", "E")
-                                )
-                        )
+                        Arrays.asList(parseStringNodes("A-B;B-C;C-D;D-E"))
                 ),
                 Arguments.of(
                         "5",
                         DirectedStringGraphs.LOOP,
                         "A",
                         "C",
-                        Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>("A", "B"),
-                                        new DefaultEdge<>("B", "C")
-                                )
-                        )
+                        Arrays.asList(parseStringNodes("A-B;B-C"))
                 ),
                 Arguments.of(
                         "6",
                         DirectedStringGraphs.LOOP,
                         "C",
                         "A",
-                        Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>("C", "D"),
-                                        new DefaultEdge<>("D", "E"),
-                                        new DefaultEdge<>("E", "A")
-                                )
-                        )
+                        Arrays.asList(parseStringNodes("C-D;D-E;E-A"))
                 ),
                 Arguments.of(
                         "7",
@@ -346,22 +258,9 @@ public class SimpleDFSTraversalServiceImplTest {
                         "A",
                         "C",
                         Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>("A", "B"),
-                                        new DefaultEdge<>("B", "C")
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>("A", "B"),
-                                        new DefaultEdge<>("B", "D"),
-                                        new DefaultEdge<>("D", "E"),
-                                        new DefaultEdge<>("E", "C")
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>("A", "B"),
-                                        new DefaultEdge<>("B", "O"),
-                                        new DefaultEdge<>("O", "E"),
-                                        new DefaultEdge<>("E", "C")
-                                )
+                                parseStringNodes("A-B;B-C"),
+                                parseStringNodes("A-B;B-D;D-E;E-C"),
+                                parseStringNodes("A-B;B-O;O-E;E-C")
                         )
                 ),
                 Arguments.of(
@@ -370,21 +269,9 @@ public class SimpleDFSTraversalServiceImplTest {
                         "A",
                         "E",
                         Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>("A", "B"),
-                                        new DefaultEdge<>("B", "D"),
-                                        new DefaultEdge<>("D", "E")
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>("A", "B"),
-                                        new DefaultEdge<>("B", "O"),
-                                        new DefaultEdge<>("O", "E")
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>("A", "B"),
-                                        new DefaultEdge<>("B", "C"),
-                                        new DefaultEdge<>("C", "E")
-                                )
+                                parseStringNodes("A-B;B-D;D-E"),
+                                parseStringNodes("A-B;B-O;O-E"),
+                                parseStringNodes("A-B;B-C;C-E")
                         )
                 ),
                 Arguments.of(
@@ -393,24 +280,9 @@ public class SimpleDFSTraversalServiceImplTest {
                         "A",
                         "F",
                         Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>("A", "B"),
-                                        new DefaultEdge<>("B", "D"),
-                                        new DefaultEdge<>("D", "E"),
-                                        new DefaultEdge<>("E", "F")
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>("A", "B"),
-                                        new DefaultEdge<>("B", "O"),
-                                        new DefaultEdge<>("O", "E"),
-                                        new DefaultEdge<>("E", "F")
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>("A", "B"),
-                                        new DefaultEdge<>("B", "C"),
-                                        new DefaultEdge<>("C", "E"),
-                                        new DefaultEdge<>("E", "F")
-                                )
+                                parseStringNodes("A-B;B-D;D-E;E-F"),
+                                parseStringNodes("A-B;B-O;O-E;E-F"),
+                                parseStringNodes("A-B;B-C;C-E;E-F")
                         )
                 ),
                 Arguments.of(
@@ -426,26 +298,9 @@ public class SimpleDFSTraversalServiceImplTest {
                         "A",
                         "F",
                         Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>("A", "B"),
-                                        new DefaultEdge<>("B", "G"),
-                                        new DefaultEdge<>("G", "H"),
-                                        new DefaultEdge<>("H", "I"),
-                                        new DefaultEdge<>("I", "E"),
-                                        new DefaultEdge<>("E", "F")
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>("A", "B"),
-                                        new DefaultEdge<>("B", "C"),
-                                        new DefaultEdge<>("C", "D"),
-                                        new DefaultEdge<>("D", "E"),
-                                        new DefaultEdge<>("E", "F")
-                                ),
-                                Arrays.asList(
-                                        new DefaultEdge<>("A", "B"),
-                                        new DefaultEdge<>("B", "E"),
-                                        new DefaultEdge<>("E", "F")
-                                )
+                                parseStringNodes("A-B;B-G;G-H;H-I;I-E;E-F"),
+                                parseStringNodes("A-B;B-C;C-D;D-E;E-F"),
+                                parseStringNodes("A-B;B-E;E-F")
                         )
                 ),
                 Arguments.of(
@@ -460,12 +315,7 @@ public class SimpleDFSTraversalServiceImplTest {
                         DirectedStringGraphs.NOT_CONNECTED,
                         "F",
                         "D",
-                        Arrays.asList(
-                                Arrays.asList(
-                                        new DefaultEdge<>("F", "E"),
-                                        new DefaultEdge<>("E", "D")
-                                )
-                        )
+                        Arrays.asList(parseStringNodes("F-E;E-D"))
                 ),
                 Arguments.of(
                         "15",
@@ -539,4 +389,34 @@ public class SimpleDFSTraversalServiceImplTest {
         );
         assertEquals(MSG_UNKNOWN_TARGET_VERTEX, thrownOnTarget.getLocalizedMessage());
     }
+
+    /**
+     * Parse string into String edges.
+     */
+    protected static List<DefaultEdge<String>> parseStringNodes(final String str) {
+        return parse(str, strings -> new DefaultEdge<String>(strings[0], strings[1]));
+    }
+
+    /**
+     * Parse string into Integer edges.
+     */
+    protected static List<DefaultEdge<Integer>> parseIntegerNodes(final String str) {
+        return parse(str, strings -> new DefaultEdge<Integer>(Integer.valueOf(strings[0]), Integer.valueOf(strings[1])));
+    }
+
+    private static <T> List<DefaultEdge<T>> parse(final String str, Function<String[], DefaultEdge<T>> createObjectFunction) {
+        if (str == null) {
+            return Collections.emptyList();
+        }
+
+        final List<DefaultEdge<T>> result = new ArrayList<>();
+
+        for (String link : str.split(";")) {
+            String[] nodes = link.split("-", 2);
+            // Let it fail if format is incorrect.
+            result.add(createObjectFunction.apply(nodes));
+        }
+        return result;
+    }
+
 }
