@@ -1,4 +1,4 @@
-package com.example.ussage.model;
+package com.example.usage.model;
 
 import com.example.graph.Edge;
 

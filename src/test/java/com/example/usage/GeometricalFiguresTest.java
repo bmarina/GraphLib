@@ -1,12 +1,13 @@
-package com.example.ussage;
+package com.example.usage;
 
 import com.example.traversal.TraversalService;
 import com.example.traversal.impl.SimpleDFSTraversalServiceImpl;
-import com.example.ussage.model.Color;
-import com.example.ussage.model.ColoredEdge;
-import com.example.ussage.model.ColoredFigure;
-import com.example.ussage.model.CustomColoredGraphImpl;
-import com.example.ussage.model.Shape;
+import com.example.usage.model.Color;
+import com.example.usage.model.ColoredEdge;
+import com.example.usage.model.ColoredFigure;
+import com.example.usage.model.CustomColoredGraphImpl;
+import com.example.usage.model.Shape;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -16,15 +17,22 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Shows how to use custom nodes and edges classes in graph.
+ */
+@Disabled("it is example of usage")
 public class GeometricalFiguresTest {
 
     private final Random random = new Random();
     private final TraversalService<ColoredFigure, ColoredEdge<ColoredFigure>> traversalService = new SimpleDFSTraversalServiceImpl<>();
 
+    /**
+     * Generates random graph and tries to find path between two random nodes.
+     */
     @Test
     public void buildRandomGraphAndFindPath() {
-        int countOfNodes = 10000;
-        int countOfEdges = 10000;
+        int countOfNodes = 100;
+        int countOfEdges = 100;
         CustomColoredGraphImpl graph = new CustomColoredGraphImpl();
         List<ColoredFigure> listOfNodes = generateNodes(countOfNodes);
         // Add nodes to graph.
