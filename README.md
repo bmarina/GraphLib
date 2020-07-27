@@ -6,4 +6,4 @@ Library provides some basic operations on directed and undirected graphs:
 * getPath - returns a list of edges between 2 vertices (path isn't optimal because uses simple DFS algorithm);
 * Vertices should be of a user defined type.
 
-Both vertices and edges classes could be customized. [See example](./src/test/java/com/example/ussage/model)
+Both vertices and edges classes could be customized. [See example](https://github.com/bmarina/GraphLib/tree/master/src/test/java/com/example/usage/model)
